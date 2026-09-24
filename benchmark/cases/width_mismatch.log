@@ -1,0 +1,3 @@
+[SIM] test_width
+benchmark/cases/width_mismatch.sv:3 WARNING width mismatch: 8-bit value assigned to 4-bit signal
+[FAIL] test_width
