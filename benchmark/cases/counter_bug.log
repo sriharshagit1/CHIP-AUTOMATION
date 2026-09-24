@@ -1,0 +1,3 @@
+[SIM] test_counter
+benchmark/cases/counter_bug.sv:4 ERROR expected increment by 1, observed increment by 2
+[FAIL] test_counter
