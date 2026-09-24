@@ -1,0 +1,3 @@
+[SIM] test_handshake
+benchmark/cases/handshake_bug.sv:4 ERROR expected acceptance when valid & ready, observed 0
+[FAIL] test_handshake
