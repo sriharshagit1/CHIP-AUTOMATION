@@ -1,23 +1,38 @@
 import json
 from dataclasses import dataclass
+from .tools import TOOL_REGISTRY
 
 @dataclass
 class ToolRequest:
     action: str
     arguments: dict
 
+class ProtocolError(Exception):
+    pass
+
 def parse_tool_request(text):
     try:
         obj=json.loads(text)
-        if not isinstance(obj,dict) or 'action' not in obj: return None
-        return ToolRequest(obj['action'],obj.get('arguments',{}))
-    except (json.JSONDecodeError,TypeError): return None
+    except (json.JSONDecodeError,TypeError) as e:
+        raise ProtocolError("Malformed JSON tool request") from e
+    if not isinstance(obj,dict) or not isinstance(obj.get("action"),str):
+        raise ProtocolError("Tool request requires a string action")
+    args=obj.get("arguments",{})
+    if not isinstance(args,dict):
+        raise ProtocolError("arguments must be an object")
+    if obj["action"] not in TOOL_REGISTRY:
+        raise ProtocolError("Tool is not registered")
+    return ToolRequest(obj["action"],args)
+
+def execute_tool_request(text, controller):
+    req=parse_tool_request(text)
+    return controller.call(req.action,**req.arguments)
 
 def tool_schema():
     return [
-        {'name':'read_log','description':'Read a regression log','arguments':{'path':'string'}},
-        {'name':'read_rtl','description':'Read RTL source','arguments':{'path':'string','start':'integer','end':'integer'}},
-        {'name':'search_repository','description':'Search repository text','arguments':{'root':'string','term':'string'}},
-        {'name':'inspect_testbench','description':'Read a testbench','arguments':{'path':'string'}},
-        {'name':'git_diff','description':'Inspect repository diff','arguments':{'root':'string'}}
+        {"name":"read_log","arguments":{"path":"string"}},
+        {"name":"read_rtl","arguments":{"path":"string","start":"integer","end":"integer"}},
+        {"name":"search_repository","arguments":{"root":"string","term":"string"}},
+        {"name":"inspect_testbench","arguments":{"path":"string"}},
+        {"name":"git_diff","arguments":{"root":"string"}}
     ]
