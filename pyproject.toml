@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chippilot"
+version = "0.1.0"
+description = "AI-assisted semiconductor regression debugging agent"
+requires-python = ">=3.10"
+
+[project.scripts]
+chippilot = "chippilot.cli:main"
