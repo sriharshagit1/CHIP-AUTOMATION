@@ -1,13 +1,14 @@
 # ChipPilot Benchmark
 
-The benchmark is designed to measure engineering outcomes rather than demo quality.
+The benchmark measures engineering outcomes rather than model claims.
 
-## Current metrics
-
-- Failure classification accuracy
+## Metrics
+- Classification accuracy
 - Root-cause accuracy
-- Patch proposal success
+- Patch success rate
 - Verified-fix rate
-- Regression safety
-- Time to diagnosis
+- Mean time to diagnosis/fix
 
+A case counts as a verified fix only when compile, targeted test, and regression all pass. Illustrative or incomplete cases must not be reported as measured performance.
+
+The benchmark currently contains an expanding catalog of RTL failure classes. Results should be generated from controlled executions and committed separately from the case definitions.
