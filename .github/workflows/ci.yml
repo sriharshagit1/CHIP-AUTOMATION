@@ -12,5 +12,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install simulator
+        run: sudo apt-get update && sudo apt-get install -y iverilog
       - run: python -m pip install -e .
       - run: python -m unittest discover -s tests -v
+      - name: Reproduce baseline regression
+        run: |
+          iverilog -g2012 -o /tmp/fsm.out examples/fsm/packet_controller.sv examples/fsm/tb_packet_controller.sv
+          if vvp /tmp/fsm.out; then
+            echo "Unexpected PASS: intentionally buggy RTL should fail"
+            exit 1
+          else
+            echo "Expected baseline failure reproduced"
+          fi
