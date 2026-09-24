@@ -1,11 +1,11 @@
 [
   {"id":"FSM-001","category":"fsm_transition","description":"Completion transition returns to IDLE instead of DONE","status":"implemented"},
   {"id":"ASSERT-001","category":"assertion_failure","description":"Assertion observes an unexpected state after a clock edge","status":"planned"},
-  {"id":"WIDTH-001","category":"width_mismatch","description":"Signal width mismatch truncates a control value","status":"planned"},
-  {"id":"RESET-001","category":"reset_logic","description":"Reset leaves a sequential signal in an unexpected state","status":"planned"},
-  {"id":"HANDSHAKE-001","category":"valid_ready","description":"Ready/valid handshake drops a transaction","status":"planned"},
+  {"id":"WIDTH-001","category":"width_mismatch","description":"Signal width mismatch truncates a control value","status":"fixture_added"},
+  {"id":"RESET-001","category":"reset_logic","description":"Reset leaves a sequential signal in an unexpected state","status":"fixture_added"},
+  {"id":"HANDSHAKE-001","category":"valid_ready","description":"Ready/valid handshake drops a transaction","status":"fixture_added"},
+  {"id":"COUNTER-001","category":"counter","description":"Counter boundary condition causes an off-by-one failure","status":"fixture_added"},
   {"id":"CDC-001","category":"cdc","description":"Unsynchronized control crosses clock domains","status":"planned"},
-  {"id":"COUNTER-001","category":"counter","description":"Counter boundary condition causes an off-by-one failure","status":"planned"},
   {"id":"LATCH-001","category":"incomplete_assignment","description":"Combinational path retains an unintended value","status":"planned"},
   {"id":"MUX-001","category":"mux_select","description":"Incorrect select condition chooses the wrong datapath","status":"planned"},
   {"id":"PARAM-001","category":"parameterization","description":"Parameterized module fails for a non-default width","status":"planned"}
