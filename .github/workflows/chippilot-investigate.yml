@@ -1,0 +1,43 @@
+name: ChipPilot Investigation
+
+on:
+  workflow_dispatch:
+    inputs:
+      log_path:
+        description: Regression log path
+        required: true
+        default: examples/fsm/regression.log
+      rtl_path:
+        description: RTL path
+        required: true
+        default: examples/fsm/packet_controller.sv
+      tb_path:
+        description: Testbench path
+        required: true
+        default: examples/fsm/tb_packet_controller.sv
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install simulator
+        run: sudo apt-get update && sudo apt-get install -y iverilog
+      - name: Install ChipPilot
+        run: python -m pip install -e .
+      - name: Investigate and verify
+        run: |
+          python -m chippilot.cli \
+            "${{ inputs.log_path }}" \
+            --rtl "${{ inputs.rtl_path }}" \
+            --tb "${{ inputs.tb_path }}" \
+            --verify \
+            --report evidence/chippilot-report.json
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: chippilot-evidence
+          path: evidence/chippilot-report.json
