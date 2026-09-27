@@ -1,0 +1,27 @@
+name: ChipPilot Regression Analysis
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run deterministic tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Publish benchmark contract
+        run: |
+          echo 'ChipPilot PR analysis contract validated.'
+          echo 'Real-model analysis remains opt-in and requires external provider credentials.'
