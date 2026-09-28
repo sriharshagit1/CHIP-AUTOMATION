@@ -3,7 +3,7 @@ module tb;
   handshake_bug dut(clk,rst,valid,ready,accepted);
   always #1 clk=~clk;
   initial begin #2; rst=0; valid=1; ready=1; #2;
-    if(accepted !== 1'b1) begin $display("FAIL: expected accepted=1 observed %b",accepted); $finish(1); end
+    if(accepted !== 1'b1) begin $display("FAIL: expected accepted=1 observed %b",accepted); $fatal(1); end
     $display("PASS"); $finish(0);
   end
 endmodule
