@@ -1,6 +1,6 @@
 CASES={
 'FSM-001':{'rtl':'packet_controller.sv','old':'state <= IDLE;','new':'state <= DONE;'},
-'WIDTH-001':{'rtl':'width_mismatch.sv','old':'assign nibble = {4'b0, data[3:0]};','new':'assign nibble = data;'},
+'WIDTH-001':{'rtl':'width_mismatch.sv','old':"assign nibble = {4'b0, data[3:0]};",'new':'assign nibble = data;'},
 'RESET-001':{'rtl':'reset_bug.sv','old':"if (rst) q <= 1'b1;",'new':"if (rst) q <= 1'b0;"},
 'COUNTER-001':{'rtl':'counter_bug.sv','old':'count <= count + 2;','new':'count <= count + 1;'},
 'HANDSHAKE-001':{'rtl':'handshake_bug.sv','old':'accepted <= valid & ~ready;','new':'accepted <= valid & ready;'},
