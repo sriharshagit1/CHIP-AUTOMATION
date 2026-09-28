@@ -8,5 +8,8 @@ version = "0.1.0"
 description = "AI-assisted semiconductor regression debugging agent"
 requires-python = ">=3.10"
 
+[tool.setuptools.packages.find]
+include = ["chippilot*"]
+
 [project.scripts]
 chippilot = "chippilot.cli:main"
