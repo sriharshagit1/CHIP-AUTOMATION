@@ -1,22 +1,29 @@
 # Vision implementation map
 
-| Capability | Foundation | Status |
-|---|---|---|
-| Regression diagnosis | fingerprint/triage | Implemented |
-| Patch + simulator verification | repair/fixture runners | Implemented foundation |
-| Evidence/provenance | reports/ledger/store | Implemented foundation |
-| Repository context | repository adapter | Implemented foundation |
-| Tool orchestration | registry/runtime | Implemented foundation |
-| CI/PR workflow | GitHub Actions | Implemented foundation |
-| Verified engineering memory | memory/retrieval | Implemented foundation |
-| Cross-stage planning | engineering plan | Foundation added |
-| EDA tool abstraction | EDA catalog | Foundation added |
-| Engineering knowledge graph | graph | Foundation added |
-| Synthesis analysis | tool adapter + real EDA execution | Pending |
-| STA analysis | timing-engine adapter + real tool execution | Pending |
-| DFT analysis | DFT tool adapter + real execution | Pending |
-| Post-silicon analysis | trace/log adapters + real datasets | Pending |
-| Enterprise multi-user platform | auth/tenancy/audit/deployment | Pending |
-| Customer validation | controlled pilots | Pending |
+| Capability | Status |
+|---|---|
+| Regression diagnosis | Implemented foundation |
+| Patch + simulator verification | Implemented foundation |
+| Evidence/provenance | Implemented foundation |
+| Repository context | Implemented foundation |
+| Tool orchestration | Implemented foundation |
+| CI/PR workflow | Implemented foundation |
+| Verified engineering memory | Implemented foundation |
+| Cross-stage planning | Implemented foundation |
+| EDA tool abstraction | Implemented foundation |
+| Engineering knowledge graph | Implemented foundation |
+| Objective contract | Implemented |
+| Cross-stage orchestrator | Implemented foundation |
+| Bounded execution policy | Implemented |
+| Real LLM autonomous tool loop | Pending validation |
+| Real UVM analysis | Pending |
+| Coverage optimization | Pending |
+| Formal-debug adapter | Pending |
+| Synthesis execution adapters | Pending |
+| STA execution adapters | Pending |
+| DFT execution adapters | Pending |
+| Post-silicon data adapters | Pending |
+| Enterprise multi-tenant deployment | Pending |
+| Controlled customer pilots | Pending |
 
-The key distinction is between an architecture/API foundation and validated production capability.
+Architecture is not counted as production capability until an execution-backed evaluation demonstrates it.
