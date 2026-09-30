@@ -1,13 +1,13 @@
-# Repository-aware agent loop
+# ChipPilot agent loop
 
-ChipPilot treats debugging as a tool-use problem:
+The model proposes actions; the runtime owns execution.
 
-1. Read the regression log.
-2. Read the affected RTL.
-3. Form a diagnosis.
-4. Generate the smallest candidate patch.
-5. Execute it in an isolated workspace.
-6. Inspect simulator output.
-7. Emit VERIFIED only when execution succeeds.
+1. Provider receives the objective, context, history and registered-tool manifest.
+2. Provider proposes one structured action.
+3. Runtime validates and executes the registered tool.
+4. Tool output becomes new context.
+5. The provider may re-plan.
+6. Completion is accepted only when evidence is supplied.
+7. Step budgets and tool errors terminate the run safely.
 
-The current FSM path is deterministic. The provider interface in llm_agent.py can later replace or augment diagnosis and patch planning for unseen failures.
+This separation lets the same execution layer work with different model providers and keeps verification outside the model's authority.
