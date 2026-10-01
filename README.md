@@ -1,92 +1,40 @@
-# ChipPilot — Autonomous Semiconductor Debugging Agent
+# CHIPILOT
 
-ChipPilot is an engineering-first prototype for AI-assisted semiconductor regression debugging.
+**AI Engineering Agent for Semiconductor Teams**
 
-> **Turn regression failures into verified fixes.**
+> Turn regression failures into verified fixes.
 
-## What it is
+ChipPilot is being built as an AI Engineering OS for Silicon. The first wedge is simulator-backed RTL regression investigation; the platform architecture expands across verification, synthesis, STA, DFT and post-silicon workflows.
 
-The prototype is designed around a verification-first agent loop:
+## Current platform
+- bounded agent runtime
+- provider-independent model interface
+- repository/Git tools
+- planning and objective contracts
+- evidence and run records
+- failure memory/retrieval
+- simulator-backed benchmark foundation
+- CI and public product demo
+- cross-stage EDA tool abstraction
 
-```
-Failure
-  ↓
-Diagnosis
-  ↓
-Repository context
-  ↓
-Patch proposal
-  ↓
-Simulation
-  ↓
-Verification
-  ↓
-Evidence
-```
+## Run local tests
 
-The core product idea is deliberately narrower than "AI that designs chips": start with a painful workflow — regression failure investigation — and automate the repeated engineering work around it.
-
-## Product thesis
-
-A useful engineering agent should not stop at generating an explanation. It should:
-
-1. inspect the real repository and failure artifacts,
-2. use deterministic tools,
-3. make a bounded change,
-4. execute the relevant test/regression,
-5. and report the evidence behind the result.
-
-## V1 scope
-
-- SystemVerilog / Verilator benchmark
-- Regression-log analysis
-- RTL search and context gathering
-- Git-change inspection
-- Root-cause hypothesis generation
-- Minimal patch proposal
-- Targeted simulation
-- Regression verification
-- Evidence bundle
-
-## Planned architecture
-
-```
-                    Agent Controller
-                           |
-          ┌────────────────┼────────────────┐
-          ↓                ↓                ↓
-      Log Tool          RTL Tool         Git Tool
-          |                |                |
-          └────────────────┼────────────────┘
-                           ↓
-                    Root-Cause Engine
-                           ↓
-                      Patch Engine
-                           ↓
-                    Verification Runner
-                           ↓
-                      Evidence Store
+```bash
+python -m unittest discover -s tests -v
 ```
 
-## Roadmap
+## Run the real-model benchmark
 
-**V1 — Regression Failure Investigator**  
-Controlled benchmark, diagnosis, patch proposals, and verified evidence.
+Set `CHIPILOT_API_KEY` and optionally `CHIPILOT_BASE_URL`, `CHIPILOT_LLM_MODEL`, `CHIPILOT_REPO`, and `CHIPILOT_MAX_STEPS`.
 
-**V2 — Repository & CI Agent**  
-GitHub/GitLab integration, pull-request analysis, regression orchestration, and historical failure search.
+```bash
+python -m benchmark.run_real_agent
+```
 
-**V3 — Verification Engineering Platform**  
-UVM/debug workflows, reusable evaluation suites, enterprise controls, and EDA integrations.
+The real-model benchmark is an experimental evaluation, not a product accuracy claim.
 
-**Long-term vision — AI Engineering OS for Silicon**  
-Verification → RTL debugging → synthesis → STA → DFT → post-silicon validation.
+## Vision
 
-## Important note
+Build an AI Engineering OS for Silicon that can accept an engineering objective, plan bounded work, operate approved engineering tools, learn from verified history, produce auditable evidence, and stop at human approval boundaries.
 
-The current public page is a product/architecture demo. The benchmark and agent implementation are being expanded iteratively; claims about accuracy or time savings should be added only after reproducible evaluation.
-
-## Demo
-
-The GitHub Pages site is the recruiter/founder-facing overview. The repository is the technical source of truth.
-
+See `docs/complete-vision.md` and `docs/vision-implementation-map.md`.
