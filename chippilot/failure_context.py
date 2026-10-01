@@ -1,13 +1,21 @@
 import re
+from dataclasses import dataclass
 
-ERROR_PATTERNS=[('ASSERTION','assert(?:ion)?'),('WIDTH','width|truncat|overflow'),('RESET','reset|rst'),('HANDSHAKE','valid|ready|handshake'),('FSM','state|transition|idle|done'),('LATCH','latch|incomplete assignment'),('MUX','mux|select|sel'),('PARAMETER','parameter|width'),('CDC','clock domain|synchron'),('COUNTER','count|increment')]
+@dataclass
+class FailureContext:
+    summary: str
+    files: list[str]
+    modules: list[str]
+    signals: list[str]
 
-def normalize_log(log):
-    lines=[x.strip() for x in log.splitlines() if x.strip()]
-    joined=' '.join(lines).lower()
-    categories=[name for name,pat in ERROR_PATTERNS if re.search(pat,joined)]
-    files=[]
-    for line in lines:
-        m=re.search(r'([\w./-]+\.sv)(?::(\d+))?',line)
-        if m: files.append({'file':m.group(1),'line':int(m.group(2)) if m.group(2) else None})
-    return {'categories':list(dict.fromkeys(categories)),'files':files,'lines':lines,'text':joined}
+class FailureContextExtractor:
+    FILE=re.compile(r'([\w./-]+\.(?:sv|v|svh|vh))')
+    SIGNAL=re.compile(r'\b(?:expected|observed|actual|signal|value)\s*[:=]\s*([A-Za-z_][A-Za-z0-9_$]*)',re.I)
+    MODULE=re.compile(r'\bmodule\s+([A-Za-z_][A-Za-z0-9_$]*)',re.I)
+    def extract(self,log):
+        return FailureContext(
+            summary=' '.join(log.strip().split())[:1000],
+            files=sorted(set(self.FILE.findall(log))),
+            modules=sorted(set(self.MODULE.findall(log))),
+            signals=sorted(set(self.SIGNAL.findall(log))),
+        )
