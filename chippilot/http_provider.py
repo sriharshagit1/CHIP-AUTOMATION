@@ -1,23 +1,20 @@
 import json
-import os
 from urllib.request import Request, urlopen
-from .provider import LLMProvider
 
-class SimpleJSONProvider(LLMProvider):
-    """Minimal JSON-over-HTTP adapter. Endpoint must return {"output": "..."}."""
-    def __init__(self,endpoint=None,api_key=None,timeout=60):
-        self.endpoint=endpoint or os.environ.get('CHIPILOT_LLM_ENDPOINT','')
-        self.api_key=api_key or os.environ.get('CHIPILOT_API_KEY','')
+class OpenAICompatibleProvider:
+    def __init__(self,api_key=None,base_url=None,model=None,timeout=60):
+        import os
+        self.api_key=api_key or os.getenv('CHIPILOT_API_KEY')
+        self.base_url=(base_url or os.getenv('CHIPILOT_BASE_URL') or 'https://api.openai.com/v1').rstrip('/')
+        self.model=model or os.getenv('CHIPILOT_LLM_MODEL','unset')
         self.timeout=timeout
-        if not self.endpoint: raise ValueError('CHIPILOT_LLM_ENDPOINT is required')
+    def next_action(self,*,objective,context,history,tools):
+        if not self.api_key: raise RuntimeError('CHIPILOT_API_KEY is not configured')
+        payload={'model':self.model,'messages':[{'role':'system','content':'You are ChipPilot. Return exactly one JSON object with action, arguments, and optional evidence. Use only registered tools. Never claim completion without evidence.'},{'role':'user','content':json.dumps({'objective':objective,'context':context,'history':history,'tools':tools})}],'temperature':0,'response_format':{'type':'json_object'}}
+        req=Request(self.base_url+'/chat/completions',data=json.dumps(payload).encode(),headers={'Authorization':'Bearer '+self.api_key,'Content-Type':'application/json'},method='POST')
+        with urlopen(req,timeout=self.timeout) as response: body=json.loads(response.read().decode())
+        action=json.loads(body['choices'][0]['message']['content'])
+        if not isinstance(action,dict) or not action.get('action'): raise ValueError('provider returned invalid action object')
+        return action
 
-    def generate(self,messages,tools):
-        payload=json.dumps({'messages':messages,'tools':tools}).encode()
-        headers={'Content-Type':'application/json'}
-        if self.api_key: headers['Authorization']='Bearer '+self.api_key
-        req=Request(self.endpoint,data=payload,headers=headers,method='POST')
-        with urlopen(req,timeout=self.timeout) as resp:
-            data=json.loads(resp.read().decode('utf-8'))
-        if not isinstance(data,dict) or not isinstance(data.get('output'),str):
-            raise ValueError('provider response must contain string field output')
-        return data['output']
+class SimpleJSONProvider(OpenAICompatibleProvider): pass
