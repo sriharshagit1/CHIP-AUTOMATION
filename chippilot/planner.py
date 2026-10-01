@@ -1,20 +1,25 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from .engineering_plan import STAGES
 
 @dataclass
 class PlanStep:
-    tool: str
-    args: tuple
+    stage: str
+    action: str
+    success_condition: str
+    tool: str | None = None
 
-class DebugPlanner:
-    def plan(self, log_path, rtl_path, tb_path):
-        return [
-            PlanStep('read_log',(log_path,)),
-            PlanStep('read_rtl',(rtl_path,)),
-            PlanStep('inspect_testbench',(tb_path,)),
-        ]
+@dataclass
+class AgentPlan:
+    objective: str
+    steps: list[PlanStep] = field(default_factory=list)
 
-    def next_after_failure(self, tool_result):
-        text=str(tool_result).lower()
-        if 'expected done' in text and 'observed idle' in text:
-            return 'diagnose_fsm'
-        return 'request_llm_reasoning'
+    def add(self,stage,action,success_condition,tool=None):
+        if stage not in STAGES: raise ValueError(f'unsupported stage: {stage}')
+        self.steps.append(PlanStep(stage,action,success_condition,tool))
+
+class Planner:
+    def plan(self,objective,stages):
+        p=AgentPlan(objective)
+        for stage in stages:
+            p.add(stage,f'investigate {objective}',f'obtain evidence for {stage}')
+        return p
