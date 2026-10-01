@@ -1,25 +1,19 @@
-from .controller import AgentController
-from .planner import DebugPlanner
-from .analyzer import diagnose
-from .patcher import propose_fsm_patch
-from .verify import verify_patch
+from .planner import Planner
+from .run_record import RunRecord
+from .agent_loop import AgentLoop
 
-class AgentRuntime:
-    def __init__(self,max_tool_calls=8):
-        self.tools=AgentController(max_tool_calls)
-        self.planner=DebugPlanner()
+class EngineeringAgentRuntime:
+    def __init__(self,provider,registry,planner=None,max_steps=8):
+        self.provider=provider
+        self.registry=registry
+        self.planner=planner or Planner()
+        self.loop=AgentLoop(provider,registry,max_steps=max_steps)
 
-    def run(self,log_path,rtl_path,tb_path):
-        trace=[]
-        for step in self.planner.plan(log_path,rtl_path,tb_path):
-            result=self.tools.call(step.tool,*step.args)
-            trace.append({'tool':step.tool,'result':str(result)[:1000]})
-        log=self.tools.call('read_log',log_path)
-        rtl=self.tools.call('read_rtl',rtl_path)
-        failure=type('Failure',(),{'message':log})()
-        diagnosis=diagnose(failure,rtl)
-        patch=propose_fsm_patch(rtl_path)
-        verification={'status':'NOT_RUN'}
-        if patch['status']=='PROPOSED':
-            verification=verify_patch(rtl_path,tb_path,patch['content'])
-        return {'diagnosis':diagnosis.__dict__,'patch':patch,'verification':verification,'trace':trace+self.tools.trace()}
+    def run(self,objective,stages):
+        record=RunRecord(objective)
+        plan=self.planner.plan(objective,stages)
+        record.event('plan',steps=[s.__dict__ for s in plan.steps])
+        result=self.loop.run(objective,{'plan':[s.__dict__ for s in plan.steps]})
+        record.event('agent_result',completed=result.completed,reason=result.reason,steps=result.steps)
+        record.finish('VERIFIED' if result.completed else result.reason)
+        return record,result
