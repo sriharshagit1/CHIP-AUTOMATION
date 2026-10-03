@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Any
+from types import SimpleNamespace
 
 @dataclass
 class LoopState:
@@ -30,4 +31,12 @@ class AgentLoop:
         return state
 
 def run_agent(provider,registry,objective,context=None,max_steps=8,policy=None):
+    if isinstance(provider,str) and isinstance(registry,str) and isinstance(objective,str):
+        from .agent_runtime import AgentRuntime
+        result=AgentRuntime().run(provider,registry,objective)
+        return SimpleNamespace(
+            diagnosis=SimpleNamespace(root_cause=result["diagnosis"]["root_cause"]),
+            patch=result["patch"],
+            verification=result["verification"],
+        )
     return AgentLoop(provider,registry,max_steps=max_steps,policy=policy).run(objective,context)
